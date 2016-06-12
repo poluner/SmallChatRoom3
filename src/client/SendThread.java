@@ -1,5 +1,6 @@
 package client;
 
+import java.io.File;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Scanner;
@@ -16,11 +17,11 @@ public class SendThread extends Thread {
 			Scanner sin = new Scanner(System.in);
 			while (true) {
 				String yourid = sin.nextLine();
-				String sendMessage = sin.nextLine();
+				String pathName = sin.nextLine();
 
 				ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
 				oos.writeInt(Integer.parseInt(yourid));
-				oos.writeObject(sendMessage);
+				oos.writeObject(new File(pathName));
 				System.out.println("sended!");
 			}
 		} catch (Exception e) {
