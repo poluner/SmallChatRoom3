@@ -24,11 +24,26 @@ public class ServerThread extends Thread {
 		try {
 			while (true) {
 				ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
-				ObjectOutputStream oos = new ObjectOutputStream(
-						MultServer.sockets.elementAt(ois.readInt()).getOutputStream());
-				oos.writeInt(id);
-				oos.writeObject(ois.readObject());
-				oos.flush();
+				int yourid = ois.readInt();
+				Object o = ois.readObject();
+				if (yourid == id) {// 目标客户是自己的时候会发送给每个人，从而实现群聊
+					for (int i = 0; i < MultServer.sockets.size(); i++) {
+						if (i != id) {
+							ObjectOutputStream oos = new ObjectOutputStream(
+									MultServer.sockets.elementAt(i).getOutputStream());
+							oos.writeInt(id);
+							oos.writeObject(o);
+							oos.flush();
+						}
+					}
+				} else {
+					ObjectOutputStream oos = new ObjectOutputStream(
+							MultServer.sockets.elementAt(yourid).getOutputStream());
+					oos.writeInt(id);
+					oos.writeObject(o);
+					oos.flush();
+				}
+
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
